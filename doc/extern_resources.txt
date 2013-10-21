@@ -1,3 +1,6 @@
+# OS CREATION
+http://wiki.osdev.org/Main_Page
+
 # BOOT
 http://www.ibm.com/developerworks/library/l-linuxboot/index.html
 http://duartes.org/gustavo/blog/post/kernel-boot-process
