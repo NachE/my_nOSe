@@ -1,0 +1,11 @@
+# BOOT
+http://www.ibm.com/developerworks/library/l-linuxboot/index.html
+http://duartes.org/gustavo/blog/post/kernel-boot-process
+http://duartes.org/gustavo/blog/post/how-computers-boot-up
+
+# ASSEMBLY
+http://en.wikibooks.org/wiki/X86_Assembly
+http://www.plantation-productions.com/Webster/www.artofasm.com/Linux/index.html
+
+# BOOKS
+Assembly Language for x86 Processors, 6/e - Kip R. Irvine
