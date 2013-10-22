@@ -5,6 +5,11 @@ http://wiki.osdev.org/Main_Page
 http://www.ibm.com/developerworks/library/l-linuxboot/index.html
 http://duartes.org/gustavo/blog/post/kernel-boot-process
 http://duartes.org/gustavo/blog/post/how-computers-boot-up
+http://www.freebsd.org/doc/en/books/arch-handbook/boot-kernel.html
+http://www.tldp.org/LDP/khg/HyperNews/get/tour/tour.html
+http://zoo.cs.yale.edu/classes/cs422/2010/lec/l3-hw
+http://www.tldp.org/HOWTO/KernelAnalysis-HOWTO-4.html
+http://beefchunk.com/documentation/hardware/microprocessors/intel/i80386/
 
 # ASSEMBLY
 http://en.wikibooks.org/wiki/X86_Assembly
