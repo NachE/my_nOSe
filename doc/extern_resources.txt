@@ -10,6 +10,9 @@ http://www.tldp.org/LDP/khg/HyperNews/get/tour/tour.html
 http://zoo.cs.yale.edu/classes/cs422/2010/lec/l3-hw
 http://www.tldp.org/HOWTO/KernelAnalysis-HOWTO-4.html
 http://beefchunk.com/documentation/hardware/microprocessors/intel/i80386/
+http://osdev.berlios.de/grub.html
+See at /arch/x86/boot
+Hurd: http://git.savannah.gnu.org/cgit/hurd/hurd.git/tree/
 
 # ASSEMBLY
 http://en.wikibooks.org/wiki/X86_Assembly
