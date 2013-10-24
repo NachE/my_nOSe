@@ -17,6 +17,7 @@ Hurd: http://git.savannah.gnu.org/cgit/hurd/hurd.git/tree/
 # ASSEMBLY
 http://en.wikibooks.org/wiki/X86_Assembly
 http://www.plantation-productions.com/Webster/www.artofasm.com/Linux/index.html
+http://www.cs.virginia.edu/~evans/cs216/guides/x86.html
 
 # BOOKS
 Assembly Language for x86 Processors, 6/e - Kip R. Irvine
