@@ -12,12 +12,18 @@
 ;
 ; 0. You just DO WHAT THE FUCK YOU WANT TO.
 
-bits 32
-
 ; nasm syntax: http://www.nasm.us/doc/nasmdoc3.html
+
+bits 32
+global start
+extern kmain
+extern kernel_start
+extern bss
+extern kernel_end
 
 ; multiboot specification
 ; http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
+section .multiboot
 MULTIBOOT_PAGE_ALIGN	equ 0x00000001
 MULTIBOOT_MEMORY_INFO	equ 0x00000002
 MULTIBOOT_AOUT_KLUDGE	equ 0x00010000
@@ -25,7 +31,7 @@ MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
 MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_AOUT_KLUDGE
 MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
-ALIGN 4
+align 4
 multiboot:
 	; DB Define Byte (8)
 	; DW Define Word (16)
@@ -34,10 +40,19 @@ multiboot:
 	dd MULTIBOOT_HEADER_FLAGS
 	dd MULTIBOOT_CHECKSUM
 
+	dd multiboot
+	dd kernel_start ; code, .text
+	dd bss		; .data
+	dd kernel_end
+	dd start
+
+;section .text
 start:
-			  ; Setup stack. Maybe better if
-			  ; point it at the end of code.
-	mov	sp,0x4000 ; This is stack size.
-	extern	_kmain	  
-	call	_kmain	  ; call kernel function
-	jmp	$	  ; infinite loop
+				; Setup stack. Maybe better if
+				; point it at the end of code.
+	mov	esp,0x4000	; This is stack size.
+	call	kmain		; call kernel function
+	jmp	$		; infinite loop
+
+
+; Maybe bss section and define kernel stack size here?

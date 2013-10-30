@@ -3,7 +3,7 @@ OBJS = $(addsuffix .o,$(basename $(SOURCES)))
 
 CFLAGS=-Wall -Wextra -O -m32 -c -ffreestanding -nostdinc -nostdlib -fno-builtin -fno-stack-protector -Iinclude
 LDFLAGS=-melf_i386 -Tld/link.ld
-ASFLAGS=-f aout
+ASFLAGS=-f elf32
 
 all: $(OBJS)
 	ld $(LDFLAGS) -o knOSe $^
