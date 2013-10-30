@@ -16,5 +16,6 @@ all: $(OBJS)
 
 clean:
 	rm $(OBJS)
+	rm knOSe
         
 .PHONY: clean
