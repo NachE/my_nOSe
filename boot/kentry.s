@@ -50,7 +50,7 @@ multiboot:
 start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
-	mov	esp,0x4000	; This is stack size.
+	mov	esp,0x400	; This is stack size.
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
