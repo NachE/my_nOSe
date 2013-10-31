@@ -46,7 +46,7 @@ multiboot:
 	dd kernel_end
 	dd start
 
-;section .text
+section .text
 start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
