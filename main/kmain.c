@@ -2,8 +2,8 @@
 void kmain()
 {
 
-unsigned short *textmemptr = (unsigned short *)0xB8000;
-unsigned short *cursor = (unsigned short *) textmemptr + 0 * 80;
+/* unsigned short *textmemptr = (unsigned short *)0xB8000;*/
+unsigned short *cursor = (unsigned short *) 0xB8000 + 0 * 80;
 
 /*
 4C L
@@ -23,35 +23,21 @@ unsigned short *cursor = (unsigned short *) textmemptr + 0 * 80;
 2E .
 */
 
-*cursor = 0x4C | (0x0F << 9);
-*cursor++;
-*cursor = 0x4F | (0x0F << 9);
-*cursor++;
-*cursor = 0x41 | (0x0F << 9);
-*cursor++;
-*cursor = 0x44 | (0x0F << 9);
-*cursor++;
-*cursor = 0x49 | (0x0F << 9);
-*cursor++;
-*cursor = 0x4E | (0x0F << 9);
-*cursor++;
-*cursor = 0x47 | (0x0F << 9);
-*cursor++;
-*cursor = 0x20 | (0x0F << 9);
-*cursor++;
-*cursor = 0x6E | (0x0F << 9);
-*cursor++;
-*cursor = 0x4F | (0x0F << 9);
-*cursor++;
-*cursor = 0x53 | (0x0F << 9);
-*cursor++;
-*cursor = 0x65 | (0x0F << 9);
-*cursor++;
-*cursor = 0x2E | (0x0F << 9);
-*cursor++;
-*cursor = 0x2E | (0x0F << 9);
-*cursor++;
-*cursor = 0x2E | (0x0F << 9);
+*cursor++ = 0x4C | (0x0F << 9);
+*cursor++ = 0x4F | (0x0F << 9);
+*cursor++ = 0x41 | (0x0F << 9);
+*cursor++ = 0x44 | (0x0F << 9);
+*cursor++ = 0x49 | (0x0F << 9);
+*cursor++ = 0x4E | (0x0F << 9);
+*cursor++ = 0x47 | (0x0F << 9);
+*cursor++ = 0x20 | (0x0F << 9);
+*cursor++ = 0x6E | (0x0F << 9);
+*cursor++ = 0x4F | (0x0F << 9);
+*cursor++ = 0x53 | (0x0F << 9);
+*cursor++ = 0x65 | (0x0F << 9);
+*cursor++ = 0x2E | (0x0F << 9);
+*cursor++ = 0x2E | (0x0F << 9);
+*cursor++ = 0x2E | (0x0F << 9);
 
 	for (;;);
 }
