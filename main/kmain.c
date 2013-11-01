@@ -2,9 +2,18 @@
 void kmain()
 {
 
-/* unsigned short *textmemptr = (unsigned short *)0xB8000;*/
-unsigned short *cursor = (unsigned short *) 0xB8000 + 0 * 80;
-
+/*
+ 0xB8000 Char in position 0
+ 0xB8001 Options
+ 0xB8002 Char in position 1
+*/
+unsigned short *cursor = (unsigned short *) 0xB8000;
+unsigned char str[] = "Loading Kernel nOSe...";
+unsigned int i;
+	for (i = 0; str[i]; i++){
+		/*0x0A = fg << 8 = bg*/
+		*cursor++ = str[i] | (0x0A << 8);
+	}
 /*
 4C L
 4F O
@@ -22,7 +31,7 @@ unsigned short *cursor = (unsigned short *) 0xB8000 + 0 * 80;
 2E .
 2E .
 */
-
+/*
 *cursor++ = 0x4C | (0x0F << 9);
 *cursor++ = 0x4F | (0x0F << 9);
 *cursor++ = 0x41 | (0x0F << 9);
@@ -38,6 +47,6 @@ unsigned short *cursor = (unsigned short *) 0xB8000 + 0 * 80;
 *cursor++ = 0x2E | (0x0F << 9);
 *cursor++ = 0x2E | (0x0F << 9);
 *cursor++ = 0x2E | (0x0F << 9);
-
+*/
 	for (;;);
 }
