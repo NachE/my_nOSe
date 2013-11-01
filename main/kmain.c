@@ -1,3 +1,5 @@
+#include <nose/vga.h>
+
 
 void kmain()
 {
@@ -7,15 +9,16 @@ void kmain()
  0xB8001 Options
  0xB8002 Char in position 1
 */
+
 unsigned short *cursor = (unsigned short *) 0xB8000;
-unsigned char str[] = "Loading Kernel nOSe...";
+unsigned char str[] = "Loading Kernel nOSe...\0";
 unsigned int i;
 	for (i = 0; str[i]; i++){
 		/*0x0A = fg << 8 = bg*/
 		*cursor++ = str[i] | (0x0A << 8);
 	}
 
-	printk("Hey", *cursor);
+	printk(" Test\0", cursor);
 
 /*
 4C L

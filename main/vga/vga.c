@@ -1,6 +1,6 @@
-#include "vga.h"
+#include <nose/vga.h>
 
-unsigned short *printk(unsigned char str[], unsigned short *pos){
+unsigned short *printk(char str[], unsigned short *pos){
 
 	unsigned int i;
 
