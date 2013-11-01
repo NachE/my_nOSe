@@ -14,6 +14,9 @@ unsigned int i;
 		/*0x0A = fg << 8 = bg*/
 		*cursor++ = str[i] | (0x0A << 8);
 	}
+
+	printk("Hey", *cursor);
+
 /*
 4C L
 4F O
