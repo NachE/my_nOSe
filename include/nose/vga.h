@@ -3,5 +3,7 @@
 #define MAX_VGA_COLS 80
 #define MAX_VGA_ROWS 25
 
+unsigned short *write_vga(char str[]);
 unsigned short *printk(char str[]);
 unsigned short *set_vga_xy(unsigned int x, unsigned int y);
+
