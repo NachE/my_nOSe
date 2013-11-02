@@ -19,3 +19,9 @@ unsigned short *printk(char str[]){
 	
 	return pos;
 }
+
+unsigned short *set_vga_xy(unsigned int x, unsigned int y){
+	unsigned int position = ( y * MAX_VGA_COLS ) + x;
+	pos = (unsigned short *) COLOR_VGA_ADDR + position;
+	return pos;
+}
