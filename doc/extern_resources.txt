@@ -21,3 +21,6 @@ http://www.cs.virginia.edu/~evans/cs216/guides/x86.html
 
 # BOOKS
 Assembly Language for x86 Processors, 6/e - Kip R. Irvine
+
+# IA32 Devel manuel
+http://download.intel.com/design/processor/manuals/253668.pdf
