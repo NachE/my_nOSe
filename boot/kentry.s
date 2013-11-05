@@ -73,24 +73,35 @@ gdt_flush:
 ; it will be modified
 ; because it define two[3]
 ; gdt entry but where is the
-; size of them?
+; size of them? -> defined on
+; GDTLIMIT - gdtr
+;
+; *****TODO:
+; All right this is f* crazy
+; look for a reliable GDTR table
+; an then code on gdt:
 gdt:
+	; ONE
 	dw	0,0,0,0 ; null descriptor
 
+	; TWO
 	dw	0x07FF ;limit -> TODO: change to 4G (32b)
 	dw	0x0000
 	dw	0x9A00 ; code segment
 	dw	0x00C0 ; granularity
 
+	; THREE
 	dw	0x07FF
 	dw	0x0000
 	dw	0x9200 ; data segment
 	dw	0x00C0
 	
-GDTLIMIT equ ($ - gdt)
+GDTLIMIT	equ ($ - gdt) ; count size of gdt:
 
 gdtr:
-	dw	GDTLIMIT
-	dd	gdt     ; I think base is the same size at limit but
-			; but if i put dw here I get error. Why?
+	dw	GDTLIMIT ; size of gdt
+	dd	gdt      ; I think base is the same size at limit but
+			 ; but if i put dw here I get error. Why?
+			 ; OK, limit->16 bits. Base -> 32 bits
+
 ; Maybe bss section and define kernel stack size here?
