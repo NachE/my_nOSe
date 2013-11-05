@@ -46,13 +46,46 @@ multiboot:
 	dd kernel_end
 	dd start
 
+
+
+
 section .text
 start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
 	mov	esp,0x400	; This is stack size.
+	lgdt	[gdt]
+	jmp	0x08:gdt_flush
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
+
+gdt_flush:
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	ret
+
+; copied from linux 0.01
+; it will be modified
+; because it define two[3]
+; gdt entry but where is the
+; size of them?
+gdt:
+	dw	0,0,0,0 ; null descriptor
+
+	dw	0x07FF ;limit -> TODO: change to 4G (32b)
+	dw	0x0000
+	dw	0x9A00 ; code segment
+	dw	0x00C0 ; granularity
+
+	dw	0x07FF
+	dw	0x0000
+	dw	0x9200 ; data segment
+	dw	0x00C0
+	
 
 ; Maybe bss section and define kernel stack size here?
