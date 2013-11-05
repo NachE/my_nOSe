@@ -54,7 +54,7 @@ start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
 	mov	esp,0x400	; This is stack size.
-	lgdt	[gdt]
+	lgdt	[gdtr]
 	jmp	0x08:gdt_flush
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -87,5 +87,10 @@ gdt:
 	dw	0x9200 ; data segment
 	dw	0x00C0
 	
+GDTLIMIT equ ($ - gdt)
 
+gdtr:
+	dw	GDTLIMIT
+	dd	gdt     ; I think base is the same size at limit but
+			; but if i put dw here I get error. Why?
 ; Maybe bss section and define kernel stack size here?
