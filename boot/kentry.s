@@ -54,48 +54,42 @@ start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
 	mov	esp,0x400	; This is stack size.
-	lgdt	[gdtr]
-	jmp	0x08:gdt_flush
+	jmp	0x08:load_gdt
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
-
-gdt_flush:
-	mov ax, 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	ret
-
-; copied from linux 0.01
-; it will be modified
-; because it define two[3]
-; gdt entry but where is the
-; size of them? -> defined on
-; GDTLIMIT - gdtr
-;
-; *****TODO:
-; All right this is f* crazy
-; look for a reliable GDTR table
-; an then code on gdt:
 gdt:
-	; ONE
-	dw	0,0,0,0 ; null descriptor
+; using intel doc manual
+; http://download.intel.com/products/processor/manual/253668.pdf
+; The code sample define it as struct, Im going to try with this
+;	dw	; lim_0_15  16b
+;	dw	; bas_0_15  16b
+;	db	; access     8b
+;	db	; gran       8b
+;	db	; bas_24_31  8b =
 
-	; TWO
-	dw	0x07FF ;limit -> TODO: change to 4G (32b)
-	dw	0x0000
-	dw	0x9A00 ; code segment
-	dw	0x00C0 ; granularity
+	; first, null descriptor
+	dw	0
+	dw	0
+	db	0
+	db	0
+	db	0
 
-	; THREE
-	dw	0x07FF
-	dw	0x0000
-	dw	0x9200 ; data segment
-	dw	0x00C0
-	
+	; code segment
+	dw	0xFFFF
+	dw	0xFFFF
+	db	0x9A
+	db	0xCF
+	db	0x0
+
+	; data
+	dw	0xFFFF
+	dw	0xFFFF
+	db	0x92
+	db	0xCF
+	db	0x0
+
+
 GDTLIMIT	equ ($ - gdt) ; count size of gdt:
 
 gdtr:
@@ -103,5 +97,14 @@ gdtr:
 	dd	gdt      ; I think base is the same size at limit but
 			 ; but if i put dw here I get error. Why?
 			 ; OK, limit->16 bits. Base -> 32 bits
+load_gdt:
+	lgdt [gdtr]
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	ret
 
 ; Maybe bss section and define kernel stack size here?
