@@ -47,14 +47,14 @@ multiboot:
 	dd start
 
 
-
-
 section .text
 start:
 				; Setup stack. Maybe better if
 				; point it at the end of code.
 	mov	esp,0x400	; This is stack size.
-	jmp	0x08:load_gdt
+	lgdt	[gdtr]
+	;jmp     0x0008:reload_gdt
+	call	reload_gdt
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
@@ -64,47 +64,52 @@ gdt:
 ; The code sample define it as struct, Im going to try with this
 ;	dw	; lim_0_15  16b
 ;	dw	; bas_0_15  16b
+;	db	; ????????
 ;	db	; access     8b
 ;	db	; gran       8b
 ;	db	; bas_24_31  8b =
-
+;00235612348i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+;00235612348i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
 	; first, null descriptor
-	dw	0
-	dw	0
-	db	0
-	db	0
-	db	0
-
+	;dw	0x0000
+	;dw	0x0000
+	;db	0x00   
+	;db	0x00
+	;db	0x00
+	;db	0x00
+	dd	0x00000000
+	dd	0x00000000
 	; code segment
 	dw	0xFFFF
-	dw	0xFFFF
+	dw	0x0000
+	db	0x00
 	db	0x9A
-	db	0xCF
-	db	0x0
-
+	db	0xC1
+	db	0x00
 	; data
 	dw	0xFFFF
-	dw	0xFFFF
+	dw	0x0000
+	db	0x00
 	db	0x92
-	db	0xCF
-	db	0x0
-
-
-GDTLIMIT	equ ($ - gdt) ; count size of gdt:
-
+	db	0xC0
+	db	0x00
+gdt_end:
 gdtr:
-	dw	GDTLIMIT ; size of gdt
+	dw	gdt_end - gdt - 1 ; size of gdt <-leng of GDT -1
 	dd	gdt      ; I think base is the same size at limit but
 			 ; but if i put dw here I get error. Why?
 			 ; OK, limit->16 bits. Base -> 32 bits
-load_gdt:
-	lgdt [gdtr]
+reload_gdt:
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
+	jmp     0x08:farjump
+	ret
+
+farjump:
 	ret
 
 ; Maybe bss section and define kernel stack size here?
