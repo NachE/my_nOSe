@@ -49,11 +49,9 @@ multiboot:
 
 section .text
 start:
-				; Setup stack. Maybe better if
-				; point it at the end of code.
+				; Setup stack.
 	mov	esp,0x400	; This is stack size.
 	lgdt	[gdtr]
-	;jmp     0x0008:reload_gdt
 	call	reload_gdt
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -67,30 +65,78 @@ gdt:
 ;	db	; ????????
 ;	db	; access     8b
 ;	db	; gran       8b
-;	db	; bas_24_31  8b =
-;00235612348i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-;00235612348i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+;	db	; bas_24_31  8b
+;
+; Intel Code on Developer's manual Volume 3A. 9-25, Pag 421.
+;
+; 86 DESC STRUC
+; 87 lim_0_15	DW ?
+; 88 bas_0_15	DW ?
+; 89 bas_16_23	DB ?
+; 90 access	DB ?
+; 91 gran	DB ?
+; 92 bas_24_31	DB ?
+; 93 DESC ENDS
+;
+; 	From right to left:
+;
+;         Base                 Granularity              Access                      Base
+;|                       |                       |                        |                      |
+; 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+;  ^                    ^  ^  ^  ^  ^  ^        ^  ^  ^  ^  ^  ^        ^  ^                    ^
+;  |                    |  |  |  |  |  |        |  |  |__|  |  |        |  |                    |
+;  |____________________|  |  |  |  |  |        |  |    |   |  |        |  |                    |___ Base start
+;           |              |  |  |  |  |        |  |    |   |  |        |  |________________________ Base end
+;           |              |  |  |  |  |        |  |    |   |  |        |
+;           |              |  |  |  |  |        |  |    |   |  |        |___________________________ Type start
+;           |              |  |  |  |  |        |  |    |   |  |____________________________________ Type end
+;           |              |  |  |  |  |        |  |    |   |    
+;           |              |  |  |  |  |        |  |    |   |_______________________________________ S. Segment Present flag
+;           |              |  |  |  |  |        |  |    |  
+;           |              |  |  |  |  |        |  |    |___________________________________________ DPL. Desc. Priv. Level
+;           |              |  |  |  |  |        |  |   
+;           |              |  |  |  |  |        |  |________________________________________________ P. Segment Present
+;           |              |  |  |  |  |        | 
+;           |              |  |  |  |  |        |___________________________________________________ Segment limit start     
+;           |              |  |  |  |  |____________________________________________________________ Segment limit end
+;           |              |  |  |  |      
+;           |              |  |  |  |_______________________________________________________________ AVL Available use by system soft      
+;           |              |  |  |
+;           |              |  |  |__________________________________________________________________ L 64bit code segment IA-32e mode      
+;           |              |  |
+;           |              |  |_____________________________________________________________________ D/B Default Operation Size      
+;           |              |
+;           |              |________________________________________________________________________ Granularity
+;           |
+;           |_______________________________________________________________________________________ Base                               
+;
+;
+; 00235612348i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+; 00235612348i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+;
+; 00175389824i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 1fffffff 1 1 <-- 1fffffff ???
+;
 	; first, null descriptor
-	;dw	0x0000
-	;dw	0x0000
-	;db	0x00   
-	;db	0x00
-	;db	0x00
-	;db	0x00
 	dd	0x00000000
 	dd	0x00000000
+
 	; code segment
-	dw	0xFFFF
-	dw	0x0000
-	db	0x00
-	db	0x9A
-	db	0xC1
-	db	0x00
+	dw	0xFFFF    ; Limit
+	dw	0x0000    ; Base
+	db	0x00      ; Base
+	;db	0x9A      ; Granularity 10011010
+	db	10011010b
+	;db	0xC1      ; Access
+	;		  ; P DPL S TYPE
+	db	11000001b ; 1 10  0 0001
+	db	0x00      ; base
+
 	; data
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
-	db	0x92
+	;db	0x92
+	db	10010010b
 	db	0xC0
 	db	0x00
 gdt_end:
