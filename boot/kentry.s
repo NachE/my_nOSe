@@ -124,11 +124,9 @@ gdt:
 	dw	0xFFFF    ; Limit
 	dw	0x0000    ; Base
 	db	0x00      ; Base
-	;db	0x9A      ; Granularity 10011010
-	db	10011010b
-	;db	0xC1      ; Access
-	;		  ; P DPL S TYPE
-	db	11000001b ; 1 10  0 0001
+	;                 ; P DPL S TYPE
+	db	10011010b ; 1 00  1 1010  0x9A Access
+	db	11000001b ; Granularity 0xC1
 	db	0x00      ; base
 
 	; data
