@@ -50,9 +50,9 @@ multiboot:
 
 section .text
 start:
-	lgdt	[gdtr]
-	call	reload_gdt
-	call	load_idt
+	;lgdt	[gdtr]
+	;call	reload_gdt
+	;call	load_idt
 	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -127,7 +127,7 @@ gdt:
 	db	0x00      ; Base
 	;	          ; P DPL S TYPE
 	db	10011010b ; 1 00  1 1010  0x9A Access
-	db	11000001b ; Granularity 0xC1
+	db	11000000b ; Granularity 0xC1
 	db	0x00      ; base
 
 	; data
@@ -138,6 +138,24 @@ gdt:
 	db	10010010b
 	db	0xC0
 	db	0x00
+
+
+	; user code
+	dw	0xFFFF
+	dw	0x0000
+	db	0x00
+	db	11111010b
+	db	11000000b
+	db	0x00
+
+	; user data
+	dw	0xFFFF
+	dw	0x0000
+	db	0x00
+	db	11110010b
+	db	11000000b
+	db	0x00
+
 gdt_end:
 gdtr:
 	dw	gdt_end - gdt - 1 ; size of gdt <-leng of GDT -1
