@@ -3,6 +3,6 @@
 
 
 void isr_kernel(interrupts_t interrupt){
-	printk("\n:(\n");
+	printk("\n:(\n\0");
 	printk("\nInterrupt received\0");
 }

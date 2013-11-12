@@ -15,8 +15,9 @@
 ; nasm syntax: http://www.nasm.us/doc/nasmdoc3.html
 
 bits 32
+global reload_gdt
+global load_idt
 global start
-global isr0
 extern kmain
 extern kernel_start
 extern bss
@@ -51,8 +52,8 @@ multiboot:
 section .text
 start:
 	lgdt	[gdtr]
-	call	reload_gdt
-	call	load_idt
+	;call	reload_gdt
+	;jmp	load_idt
 	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -230,15 +231,21 @@ ISRX 28  ;
 ISRX 29  ;
 ISRX 30  ;
 ISRX 31  ;
+ISRX 32
+ISRX 33
+ISRX 34
+ISRX 35
+ISRX 36
+ISRX 37
 ; 32-255 ; Maskable interrupts
 
 %macro IRQX 1
         irq%1:
-		dw	((isr%1-$$ + 0x100000) & 0xFFFF) ; low part of function offset
+		dw	((isr%1-$$ + 0x000000) & 0xFFFF) ; low part of function offset
 		dw	0x0008                ; selector, CS is at 0x08
 		db	0x00                  ; unused
 		db	10001110b             ; attr
-		dw	((isr%1-$$ + 0x100000) >> 16) & 0xFFFF ; hight part of function offset
+		dw	((isr%1-$$ + 0x000000) >> 16) & 0xFFFF ; hight part of function offset
 %endmacro
 
 idt:
@@ -274,6 +281,12 @@ idt:
 	IRQX 29
 	IRQX 30
 	IRQX 31
+	IRQX 32
+	IRQX 33
+	IRQX 34
+	IRQX 35
+	IRQX 36
+	IRQX 37
 idt_end:
 idtr:
 	dw	idt_end - idt - 1
