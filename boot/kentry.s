@@ -52,8 +52,8 @@ section .text
 start:
 	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	lgdt	[gdtr]
-	lidt	[idtr]
 	call	reload_gdt
+	lidt	[idtr]
 	mov	esp,0x400
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -158,28 +158,100 @@ reload_gdt:
 farjump:
 	ret
 
-isr0:
-	cli
-	push	byte 0
-	push	byte 0
-	jmp	call_isr_kernel
+;*************** IDT ****************
+
+%macro ISRX 1
+	isr%1:
+		cli
+		push byte 0
+		push byte %1 ; interrupt number
+		jmp call_isr_kernel
+%endmacro
+
+%macro ISRX_WITHECODE 1
+	isr%1:
+		cli
+		push byte %1
+		jmp call_isr_kernel
+%endmacro
+
+ISRX 0   ; Divide error
+ISRX 1   ; Debug
+ISRX 2   ; NMI INterrupt
+ISRX 3   ; Breakpoint
+ISRX 4   ; Overflow
+ISRX 5   ; BOund range Exceeded
+ISRX 6   ; Invalid Opcode (undefined Opcode)
+ISRX 7   ; Device Not Available No Math Coprocessor
+ISRX_WITHECODE 8   ; Doble Fault
+ISRX 9   ; Coprocessor Segment overrun (reserved)
+ISRX_WITHECODE 10  ; INvalid TSS
+ISRX_WITHECODE 11  ; Segment Not PResent
+ISRX_WITHECODE 12  ; Stack Segment fault
+ISRX_WITHECODE 13  ; General Protection
+ISRX_WITHECODE 14  ; Page Fault
+ISRX 15  ; Reserved
+ISRX 16  ; FLoating Point Error Math Fault
+ISRX 17  ; Alignment Check
+ISRX 18  ; Machine Check
+ISRX 19  ; SIMD FLoating Point Exception
+; Reserved:
+ISRX 20  ;
+ISRX 21  ;
+ISRX 22  ;
+ISRX 23  ;
+ISRX 24  ;
+ISRX 25  ;
+ISRX 26  ;
+ISRX 27  ;
+ISRX 28  ;
+ISRX 29  ;
+ISRX 30  ;
+ISRX 31  ;
+; 32-255 ; Maskable interrupts
+
+%macro IRQX 1
+        irq%1:
+		dw	((isr%1-$$) & 0xFFFF) ; low part of function offset
+		dw	0x0008                ; selector, CS is at 0x08
+		db	0x00                  ; unused
+		db	10101110b             ; attr
+		dw	((isr%1-$$) >> 16) & 0xFFFF ; hight part of function offset
+%endmacro
 
 idt:
-	;%assign %$i 0
-	;%rep	255
-	;	dw	isr%$i         ;offset
-	;	dw	0x0008        ; selector, CS is at 0x08
-	;	db	0x00          ; unused
-	;	db	10101110b     ; attr
-	;	dw	0x0000        ; offset 16_31
-	;%assign %$i %$i+1
-	;%endrep
-irq0:
-	dw	((isr0-$$) & 0xFFFF) ;low part of function offset
-	dw	0x0008
-	db	0x00
-	db	10101110b
-	dw	((isr0-$$) >> 16) & 0xFFFF ; hight part of function offset
+	IRQX 0
+	IRQX 1
+	IRQX 2
+	IRQX 3
+	IRQX 4
+	IRQX 5
+	IRQX 6
+	IRQX 7
+	IRQX 8
+	IRQX 9
+	IRQX 10
+	IRQX 11
+	IRQX 12
+	IRQX 13
+	IRQX 14
+	IRQX 15
+	IRQX 16
+	IRQX 17
+	IRQX 18
+	IRQX 19
+	IRQX 20
+	IRQX 21
+	IRQX 22
+	IRQX 23
+	IRQX 24
+	IRQX 25
+	IRQX 26
+	IRQX 27
+	IRQX 28
+	IRQX 29
+	IRQX 30
+	IRQX 31
 
 idt_end:
 idtr:
