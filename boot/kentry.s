@@ -16,10 +16,12 @@
 
 bits 32
 global start
+global isr0
 extern kmain
 extern kernel_start
 extern bss
 extern kernel_end
+extern isr_kernel
 
 ; multiboot specification
 ; http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
@@ -46,13 +48,13 @@ multiboot:
 	dd kernel_end
 	dd start
 
-
 section .text
 start:
-				; Setup stack.
-	mov	esp,0x400	; This is stack size.
+	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	lgdt	[gdtr]
+	lidt	[idtr]
 	call	reload_gdt
+	mov	esp,0x400
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
@@ -124,7 +126,7 @@ gdt:
 	dw	0xFFFF    ; Limit
 	dw	0x0000    ; Base
 	db	0x00      ; Base
-	;                 ; P DPL S TYPE
+	;	          ; P DPL S TYPE
 	db	10011010b ; 1 00  1 1010  0x9A Access
 	db	11000001b ; Granularity 0xC1
 	db	0x00      ; base
@@ -144,16 +146,65 @@ gdtr:
 			 ; but if i put dw here I get error. Why?
 			 ; OK, limit->16 bits. Base -> 32 bits
 reload_gdt:
+	mov ax, 0x10 ; DS location
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	jmp     0x08:farjump ; CS location
+	ret
+
+farjump:
+	ret
+
+isr0:
+	cli
+	push	byte 0
+	push	byte 0
+	jmp	call_isr_kernel
+
+idt:
+	;%assign %$i 0
+	;%rep	255
+	;	dw	isr%$i         ;offset
+	;	dw	0x0008        ; selector, CS is at 0x08
+	;	db	0x00          ; unused
+	;	db	10101110b     ; attr
+	;	dw	0x0000        ; offset 16_31
+	;%assign %$i %$i+1
+	;%endrep
+irq0:
+	dw	((isr0-$$) & 0xFFFF) ;low part of function offset
+	dw	0x0008
+	db	0x00
+	db	10101110b
+	dw	((isr0-$$) >> 16) & 0xFFFF ; hight part of function offset
+
+idt_end:
+idtr:
+	dw	idt_end - idt - 1
+	dd	idt
+
+call_isr_kernel:
+	pusha
+	mov ax, ds
+	push eax
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	jmp     0x08:farjump
-	ret
-
-farjump:
-	ret
+	call isr_kernel
+	pop eax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	popa
+	add esp, 8
+	sti
+	iret
 
 ; Maybe bss section and define kernel stack size here?

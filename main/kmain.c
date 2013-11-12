@@ -26,5 +26,7 @@ void kmain()
 	set_vga_xy(40,12);
 	printk("Set VGA position test.\0");
 	printk("\nReturn test.\0");
+	/*test irq*/
+	/*asm volatile ("int $0x0");*/
 	for (;;);
 }
