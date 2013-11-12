@@ -50,10 +50,10 @@ multiboot:
 
 section .text
 start:
-	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	lgdt	[gdtr]
 	call	reload_gdt
-	lidt	[idtr]
+	call	load_idt
+	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
@@ -157,6 +157,9 @@ reload_gdt:
 farjump:
 	ret
 
+load_idt:
+	lidt	[idtr]
+	ret
 ;*************** IDT ****************
 
 %macro ISRX 1
