@@ -54,7 +54,6 @@ start:
 	lgdt	[gdtr]
 	call	reload_gdt
 	lidt	[idtr]
-	mov	esp,0x400
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
@@ -161,6 +160,7 @@ farjump:
 ;*************** IDT ****************
 
 %macro ISRX 1
+	global isr%1
 	isr%1:
 		cli
 		push byte 0
@@ -169,6 +169,7 @@ farjump:
 %endmacro
 
 %macro ISRX_WITHECODE 1
+	global isr%1
 	isr%1:
 		cli
 		push byte %1
@@ -215,7 +216,7 @@ ISRX 31  ;
 		dw	((isr%1-$$) & 0xFFFF) ; low part of function offset
 		dw	0x0008                ; selector, CS is at 0x08
 		db	0x00                  ; unused
-		db	10101110b             ; attr
+		db	10001110b             ; attr
 		dw	((isr%1-$$) >> 16) & 0xFFFF ; hight part of function offset
 %endmacro
 
@@ -252,7 +253,6 @@ idt:
 	IRQX 29
 	IRQX 30
 	IRQX 31
-
 idt_end:
 idtr:
 	dw	idt_end - idt - 1
