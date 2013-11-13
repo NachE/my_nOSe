@@ -16,16 +16,11 @@
 
 bits 32
 global load_gdt
-
 global start
 extern kmain
 extern kernel_start
 extern bss
 extern kernel_end
-global gdtCS
-global gdtDS
-global gdtuCS
-global gdtuDS
 
 ; multiboot specification
 ; http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
@@ -54,7 +49,7 @@ multiboot:
 
 section .text
 start:
-	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
+	mov	esp,kernel_stack ;stack on bss
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
 
@@ -172,7 +167,11 @@ load_gdt:
 	mov gs, ax
 	mov ss, ax
 	jmp     0x08:farjump ; CS location
-	ret
 
 farjump:
 	ret
+
+
+section .bss
+resb 0x400
+kernel_stack:
