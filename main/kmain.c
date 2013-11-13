@@ -19,18 +19,18 @@
 
 #include <nose/vga.h>
 
-extern void reload_gdt();
+extern void load_gdt();
 extern void load_idt();
 
 void kmain()
 {
 	printk("Reloading GDT...\n\0");
-	reload_gdt();
+	load_gdt();
 	printk("Loading IDT...\n\0");
 	load_idt();
 	set_vga_xy(40,12);
 	printk("Set VGA position test.\n\0");
 	/*test irq*/
-	/*asm volatile ("int $0x01"); */
+	 /* asm volatile ("int $0x03");   */
 	for (;;);
 }

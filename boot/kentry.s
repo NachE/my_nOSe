@@ -15,7 +15,7 @@
 ; nasm syntax: http://www.nasm.us/doc/nasmdoc3.html
 
 bits 32
-global reload_gdt
+global load_gdt
 
 global start
 extern kmain
@@ -54,9 +54,6 @@ multiboot:
 
 section .text
 start:
-	lgdt	[gdtr]
-	;call	reload_gdt
-	;jmp	load_idt
 	mov	esp,0x400 ; stack size should be at 0x18 -> watch over.
 	call	kmain		; call kernel function
 	jmp	$		; infinite loop
@@ -121,6 +118,7 @@ gdt:
 ;
 ; 00175389824i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 1fffffff 1 1 <-- 1fffffff ???
 ;
+	gdtNULL:
 	; first, null descriptor
 	dd	0x00000000
 	dd	0x00000000
@@ -165,7 +163,8 @@ gdtr:
 	dd	gdt      ; I think base is the same size at limit but
 			 ; but if i put dw here I get error. Why?
 			 ; OK, limit->16 bits. Base -> 32 bits
-reload_gdt:
+load_gdt:
+	lgdt	[gdtr]
 	mov ax, 0x10 ; DS location
 	mov ds, ax
 	mov es, ax
