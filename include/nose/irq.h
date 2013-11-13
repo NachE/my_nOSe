@@ -6,3 +6,6 @@ typedef struct interrupts{
 	unsigned int int_number, error_code;
 	unsigned int e_ip, cs, e_flags, user_esp, ss;
 } interrupts_t;
+
+void isr_kernel(interrupts_t interrupt);
+
