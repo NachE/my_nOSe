@@ -22,6 +22,10 @@ extern isr_kernel_debug
 
 
 global load_idt
+global debug_idt
+
+debug_idt:
+	int	0x08
 
 load_idt:
 	lidt	[idtr]

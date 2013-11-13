@@ -21,6 +21,7 @@
 
 extern void load_gdt();
 extern void load_idt();
+extern void debug_idt();
 
 void kmain()
 {
@@ -32,5 +33,6 @@ void kmain()
 	printk("Set VGA position test.\n\0");
 	/*test irq*/
 	 /* asm volatile ("int $0x03");*/ 
+	debug_idt();
 	for (;;);
 }
