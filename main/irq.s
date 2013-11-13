@@ -13,6 +13,10 @@
 ; 0. You just DO WHAT THE FUCK YOU WANT TO.
 
 ;*************** IDT ****************
+extern gdtCS
+extern gdtDS
+extern gdtuCS
+extern gdtuDS
 extern isr_kernel
 global load_idt
 
@@ -72,48 +76,48 @@ ISRX 30  ;
 ISRX 31  ;
 ; 32-255 ; Maskable interrupts
 
-%macro IRQX 1
-        irq%1:
+%macro IDTX 1
+        idt%1:
 		dw	((isr%1-$$ + 0x000000) & 0xFFFF) ; low part of function offset
-		dw	0x0008                ; selector, CS is at 0x08
+		dw	0x08                ; selector, CS is at 0x08
 		db	0x00                  ; unused
 		db	10001110b             ; attr
 		dw	((isr%1-$$ + 0x000000) >> 16) & 0xFFFF ; hight part of function offset
 %endmacro
 
 idt:
-	IRQX 0
-	IRQX 1
-	IRQX 2
-	IRQX 3
-	IRQX 4
-	IRQX 5
-	IRQX 6
-	IRQX 7
-	IRQX 8
-	IRQX 9
-	IRQX 10
-	IRQX 11
-	IRQX 12
-	IRQX 13
-	IRQX 14
-	IRQX 15
-	IRQX 16
-	IRQX 17
-	IRQX 18
-	IRQX 19
-	IRQX 20
-	IRQX 21
-	IRQX 22
-	IRQX 23
-	IRQX 24
-	IRQX 25
-	IRQX 26
-	IRQX 27
-	IRQX 28
-	IRQX 29
-	IRQX 30
-	IRQX 31
+	IDTX 0
+	IDTX 1
+	IDTX 2
+	IDTX 3
+	IDTX 4
+	IDTX 5
+	IDTX 6
+	IDTX 7
+	IDTX 8
+	IDTX 9
+	IDTX 10
+	IDTX 11
+	IDTX 12
+	IDTX 13
+	IDTX 14
+	IDTX 15
+	IDTX 16
+	IDTX 17
+	IDTX 18
+	IDTX 19
+	IDTX 20
+	IDTX 21
+	IDTX 22
+	IDTX 23
+	IDTX 24
+	IDTX 25
+	IDTX 26
+	IDTX 27
+	IDTX 28
+	IDTX 29
+	IDTX 30
+	IDTX 31
 idt_end:
 idtr:
 	dw	idt_end - idt - 1

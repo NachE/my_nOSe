@@ -22,7 +22,10 @@ extern kmain
 extern kernel_start
 extern bss
 extern kernel_end
-
+global gdtCS
+global gdtDS
+global gdtuCS
+global gdtuDS
 
 ; multiboot specification
 ; http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
@@ -121,7 +124,7 @@ gdt:
 	; first, null descriptor
 	dd	0x00000000
 	dd	0x00000000
-
+	gdtCS:
 	; code segment
 	dw	0xFFFF    ; Limit
 	dw	0x0000    ; Base
@@ -130,7 +133,7 @@ gdt:
 	db	10011010b ; 1 00  1 1010  0x9A Access
 	db	11000000b ; Granularity 0xC1
 	db	0x00      ; base
-
+	gdtDS:
 	; data
 	dw	0xFFFF
 	dw	0x0000
@@ -139,8 +142,7 @@ gdt:
 	db	10010010b
 	db	0xC0
 	db	0x00
-
-
+	gdtuCS:
 	; user code
 	dw	0xFFFF
 	dw	0x0000
@@ -148,7 +150,7 @@ gdt:
 	db	11111010b
 	db	11000000b
 	db	0x00
-
+	gdtuDS:
 	; user data
 	dw	0xFFFF
 	dw	0x0000
