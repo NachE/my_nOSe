@@ -81,7 +81,8 @@ ISRX 31  ;
 		dw	((isr%1-$$ + 0x000000) & 0xFFFF) ; low part of function offset
 		dw	0x08                ; selector, CS is at 0x08
 		db	0x00                  ; unused
-		db	10001110b             ; attr
+		;	                      ;      P DPL S Type <--- sure????
+		db	10001110b             ; attr 1 00  0 1110
 		dw	((isr%1-$$ + 0x000000) >> 16) & 0xFFFF ; hight part of function offset
 %endmacro
 
