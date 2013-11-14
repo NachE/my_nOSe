@@ -3,6 +3,11 @@
 
 
 
+
+void divide_zero(int num){
+	num = 1 / 0;
+}
+
 void isr_kernel_debug(){
 	printk("\nisr_kernel_debug called\n\0");
 }

@@ -18,16 +18,17 @@
  */
 
 #include <nose/vga.h>
+#include <nose/irq.h>
 extern void debug_idt();
 
 void kmain()
 {
-	int a, b = 0;
+	int a;
 	set_vga_xy(40,12);
 	printk("Welcome to nOSe\n\0");
 	/*test irq*/
-	debug_idt();
-	a = 21;
-	b = a / 0;
+	/*debug_idt();*/
+	a/=0;
+	asm volatile("int $0x00");
 	for (;;);
 }

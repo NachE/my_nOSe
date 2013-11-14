@@ -17,7 +17,6 @@
 bits 32
 global load_gdt
 global start
-extern load_idt
 extern kmain
 extern kernel_start
 extern bss
@@ -181,6 +180,8 @@ farjump:
 	call	kmain
 
 
+irqs:
+%include "boot/irq.i"
 section .bss
 resb 0x400
 kernel_stack:

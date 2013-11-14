@@ -9,4 +9,5 @@ typedef struct interrupts{
 
 void isr_kernel_debug(void);
 void isr_kernel(interrupts_t interrupt);
+void divide_zero(int num);
 
