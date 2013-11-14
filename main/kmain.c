@@ -18,21 +18,16 @@
  */
 
 #include <nose/vga.h>
-
-extern void load_gdt();
-extern void load_idt();
 extern void debug_idt();
 
 void kmain()
 {
-	/*printk("Reloading GDT...\n\0");*/
-	/*load_gdt();*/
-	/*printk("Loading IDT...\n\0");*/
-	/*load_idt();*/
+	int a, b = 0;
 	set_vga_xy(40,12);
 	printk("Welcome to nOSe\n\0");
 	/*test irq*/
-	 asm volatile ("int $0x03");
-	/*debug_idt();*/
+	debug_idt();
+	a = 21;
+	b = a / 0;
 	for (;;);
 }

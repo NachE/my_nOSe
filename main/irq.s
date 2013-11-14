@@ -13,10 +13,6 @@
 ; 0. You just DO WHAT THE FUCK YOU WANT TO.
 
 ;*************** IDT ****************
-extern gdtCS
-extern gdtDS
-extern gdtuCS
-extern gdtuDS
 extern isr_kernel
 extern isr_kernel_debug
 
@@ -85,12 +81,12 @@ ISRX 31  ;
 
 %macro IDTX 1
         idt%1:
-		dw	((isr%1-$$) & 0xFFFF) ; low part of function offset
+		dw	((0x100000 + isr%1-$$) & 0xFFFF) ; low part of function offset
 		dw	0x0008                ; selector, CS is at 0x08
 		db	0x00                  ; unused
 		;	                      ;      P DPL S Type <--- sure????
 		db	10001110b             ; attr 1 00  0 1110
-		dw	((isr%1-$$) >> 16) & 0xFFFF ; hight part of function offset
+		dw	((0x100000 + isr%1-$$) >> 16) & 0xFFFF ; hight part of function offset
 %endmacro
 
 idt:
