@@ -25,14 +25,14 @@ extern void debug_idt();
 
 void kmain()
 {
-	printk("Reloading GDT...\n\0");
-	load_gdt();
-	printk("Loading IDT...\n\0");
-	load_idt();
+	/*printk("Reloading GDT...\n\0");*/
+	/*load_gdt();*/
+	/*printk("Loading IDT...\n\0");*/
+	/*load_idt();*/
 	set_vga_xy(40,12);
-	printk("Set VGA position test.\n\0");
+	printk("Welcome to nOSe\n\0");
 	/*test irq*/
-	 /* asm volatile ("int $0x03");*/ 
-	debug_idt();
+	 asm volatile ("int $0x03");
+	/*debug_idt();*/
 	for (;;);
 }

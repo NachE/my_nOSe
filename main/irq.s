@@ -133,6 +133,7 @@ idtr:
 idtr_end:
 
 call_isr_kernel:
+	call isr_kernel_debug
 	pusha
 	mov ax, ds
 	push eax

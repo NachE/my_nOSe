@@ -17,6 +17,7 @@
 bits 32
 global load_gdt
 global start
+extern load_idt
 extern kmain
 extern kernel_start
 extern bss
@@ -50,8 +51,7 @@ multiboot:
 section .text
 start:
 	mov	esp,kernel_stack ;stack on bss
-	call	kmain		; call kernel function
-	jmp	$		; infinite loop
+	call	load_gdt
 
 gdt:
 ; using intel doc manual
@@ -124,7 +124,7 @@ gdt:
 	db	0x00      ; Base
 	;	          ; P DPL S TYPE
 	db	10011010b ; 1 00  1 1010  0x9A Access
-	db	11000000b ; Granularity 0xC1
+	db	11001111b ; Granularity 0xC1
 	db	0x00      ; base
 	gdtDS:
 	; data
@@ -133,23 +133,31 @@ gdt:
 	db	0x00
 	;db	0x92
 	db	10010010b
-	db	0xC0
+	;db	0xC0
+	db	11001111b
 	db	0x00
 	gdtuCS:
 	; user code
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
-	db	11111010b
-	db	11000000b
+	db	10011010b
+	db	00000000b
 	db	0x00
 	gdtuDS:
 	; user data
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
-	db	11110010b
-	db	11000000b
+	db	10010010b
+	db	00000000b
+	db	0x00
+
+	dw	0x000F
+	dw	0x0000
+	db	0x00 ;IDT BASE
+	db	10011010b
+	db	11001111b
 	db	0x00
 
 gdt_end:
@@ -169,7 +177,8 @@ load_gdt:
 	jmp     0x08:farjump ; CS location
 
 farjump:
-	ret
+	call	load_idt
+	call	kmain
 
 
 section .bss
