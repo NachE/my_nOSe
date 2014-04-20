@@ -166,6 +166,7 @@ load_idt:
 	IDTX 51
 	IDTX 52
 	IDTX 53
+	iret
 
 call_isr_kernel:
         pusha

@@ -26,7 +26,6 @@ void kmain()
 	int a;
 	set_vga_xy(40,12);
 	printk("Welcome to nOSe\n\0");
-	load_idt();
 
 	for (;;);
 }

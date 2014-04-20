@@ -176,6 +176,7 @@ load_gdt:
 	jmp     0x08:farjump ; CS location
 
 farjump:
+	call load_idt
 	call	kmain
 
 
