@@ -1,6 +1,6 @@
 /*
- *   vga.c
- * 
+ *   string.h
+ *
  *   This file is part of nOSe.
  *
  *   nOSe is free software: you can redistribute it and/or modify
@@ -18,13 +18,7 @@
  */
 
 
-#define COLOR_VGA_ADDR 0xb8000
-#define MONOC_VGA_ADDR 0xb0000
-#define MAX_VGA_COLS 80
-#define MAX_VGA_ROWS 25
+#define haszero(v)  (((v) - 0x01010101UL) & ~ (v) & 0x80808080UL)
 
-unsigned short *write_vga(char *str);
-unsigned short *put_char(char c);
-unsigned short *printk(char *str);
-unsigned short *printk_int(unsigned int n);
-unsigned short *set_vga_xy(unsigned int x, unsigned int y);
+unsigned int strlen(char *str);
+

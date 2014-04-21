@@ -112,11 +112,11 @@ gdt:
 ;
 ; 00175389824i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 1fffffff 1 1 <-- 1fffffff ???
 ;
-	gdtNULL:
+	;gdtNULL:
 	; first, null descriptor
 	dd	0x00000000
 	dd	0x00000000
-	gdtCS:
+	;gdtCS:
 	; code segment
 	dw	0xFFFF    ; Limit
 	dw	0x0000    ; Base
@@ -125,7 +125,7 @@ gdt:
 	db	10011010b ; 1 00  1 1010  0x9A Access
 	db	11001111b ; Granularity 0xC1
 	db	0x00      ; base
-	gdtDS:
+	;gdtDS:
 	; data
 	dw	0xFFFF
 	dw	0x0000
@@ -135,7 +135,7 @@ gdt:
 	;db	0xC0
 	db	11001111b
 	db	0x00
-	gdtuCS:
+	;gdtuCS:
 	; user code
 	dw	0xFFFF
 	dw	0x0000
@@ -143,7 +143,7 @@ gdt:
 	db	10011010b
 	db	00000000b
 	db	0x00
-	gdtuDS:
+	;gdtuDS:
 	; user data
 	dw	0xFFFF
 	dw	0x0000
@@ -158,8 +158,8 @@ gdt:
 	db	10011010b
 	db	11001111b
 	db	0x00
-
 gdt_end:
+
 gdtr:
 	dw	gdt_end - gdt - 1 ; size of gdt <-leng of GDT -1
 	dd	gdt      ; I think base is the same size at limit but

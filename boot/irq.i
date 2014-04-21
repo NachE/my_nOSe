@@ -21,17 +21,21 @@ global debug_idt
 
 %macro ISRX 1
 	isr%1:
+		mov dword [0xb8000], '1111'
 		cli
 		push byte 0
 		push byte %1 ; interrupt number
 		jmp call_isr_kernel
+		sti
 %endmacro
 
 %macro ISRX_WITHECODE 1
 	isr%1:
+		mov dword [0xb8000], '8888'
 		cli
 		push byte %1
 		jmp call_isr_kernel
+		sti
 %endmacro
 
 %macro IDTX 1
@@ -186,7 +190,6 @@ call_isr_kernel:
         mov gs, ax
         popa
         add esp, 8
-        sti
         iret
 
 

@@ -18,6 +18,8 @@
  */
 
 #include <nose/vga.h>
+#include <nose/libc/strlen.h>
+
 
 /*
  0xB8000 Char in position 0
@@ -27,40 +29,65 @@
 
 unsigned short *pos = (unsigned short *) COLOR_VGA_ADDR;
 unsigned int vga_x, vga_y = 0;
+unsigned int line_count = 0;
 
-unsigned short *printk(char str[]){
 
+unsigned short *put_char(char c)
+{
 
-	return write_vga(str);
+	c = 'a'; /*TODO: FORCE USE THIS CHAR FOR DEBUG PURPOSES*/
+
+	if(c == '\n') /*TODO: THIS DOESNT WORK */
+	{
+		/* reset x and increment y
+		 * this func correct vga_x and vga_y */
+		vga_y++;
+		set_vga_xy(0,vga_y);
+	}else{
+		
+		*pos++ = c | (0x0A << 8);
+	}
+	
+	return pos;
 }
 
-unsigned short *write_vga(char str[]){
+unsigned short *printk_int(unsigned int n)
+{
+	/*0x0A = fg << 8 = bg*/
+	*pos++ = n | (0x0A << 8); /*TODO: OBVIOUSLY THIS DOES NOT WORK*/
+	return pos;
+}
 
-	unsigned int i;
+unsigned short *write_vga(char *str){
+	return printk(str);
+}
 
-        for (i = 0; str[i]; i++){
-                /*0x0A = fg << 8 = bg*/
+unsigned short *printk(char *str)
+{
+	unsigned int i = 0;
+	
+	for(i = 0; i < strlen(str); i++)   /* TODO: THIS APARENTLY DOESNT WORK */
+	{			
 		/* increment x cursor*/
 		vga_x++;
+
 		/* if at the end of width */
 		if(vga_x > 80){
-			vga_x = 0; /* reset x to start */
-			vga_y++; /* increment y cursor */
+			vga_y++;
+			set_vga_xy(0,vga_y);
 		}
-		/* if return special char */
-		if(str[i] == '\n'){
-			set_vga_xy(0,vga_y+1); /* reset x and increment y
-						* this func correct vga_x and vga_y */
-		}else{ /* if none special char, write char */
-			/* increment pointer, write char and attr values */
-			*pos++ = str[i] | (0x0A << 8);
-		}
+
+		if(vga_y > 25)
+			set_vga_xy(0,0);
+		
+		put_char(str[i]);
         }
 	
 	return pos;
 }
 
-unsigned short *set_vga_xy(unsigned int x, unsigned int y){
+unsigned short *set_vga_xy(unsigned int x, unsigned int y)
+{
 	unsigned int position = ( y * MAX_VGA_COLS ) + x;
 	pos = (unsigned short *) COLOR_VGA_ADDR + position;
 	vga_x = x;

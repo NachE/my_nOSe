@@ -1,10 +1,6 @@
 #include <nose/vga.h>
 #include <nose/irq.h>
 
-void divide_zero(int num){
-	num = 1 / 0;
-}
-
 void isr_kernel_debug(){
 	printk("\nisr_kernel_debug called\n\0");
 }
@@ -21,14 +17,21 @@ typedef struct interrupts{
 
 
 void isr_kernel(interrupts_t interrupt){
-	printk("\nInterrupt received\n\0");
-	printINT(interrupt.int_number);
+	printk("Interrupt received\n");
+	printINT(interrupt);
 }
 
-void printINT(int n)
+void printINT(interrupts_t interrupt)
 {
-	set_vga_xy(0,0);
-	switch(n){
+
+	if(interrupt.error_code != 0){
+		printk("With Error Code");
+	}else{
+		printk("NO ERRCODE\0");
+	}
+
+	/*set_vga_xy(0,0);*/
+	switch(interrupt.int_number){
 		case 0x00:
 			printk("Division by zero\0");
 			break;
@@ -69,7 +72,7 @@ void printINT(int n)
 			printk("Stack Fault\0");
 			break;
 		case 0x0D:
-			printk("General Protection Fault\0");
+			printk("General Protection Fault\n");
 			break;
 		case 0x0E:
 			printk("Page fault\0");
