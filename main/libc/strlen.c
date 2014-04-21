@@ -21,7 +21,8 @@
 unsigned int strlen(char *str)
 {
 	unsigned int lenght = 0;
-	char *tmp = str;
+	char *tmp; 
+	tmp = str;
 
 	while(*tmp++)
 		lenght++;
