@@ -37,6 +37,15 @@ unsigned short *put_char(char c)
 
 	/*c = 'a';*/ /*TODO: FORCE USE THIS CHAR FOR DEBUG PURPOSES*/
 
+	vga_x++;
+	if(vga_x > 80){
+		vga_y++;
+		set_vga_xy(0,vga_y);
+	}
+	if(vga_y > 25){
+		set_vga_xy(0,0);
+	}
+
 	if(c == '\n') /*TODO: THIS DOESNT WORK */
 	{
 		/* reset x and increment y
@@ -51,6 +60,14 @@ unsigned short *put_char(char c)
 	return pos;
 }
 
+unsigned short *printk(char *str){
+	while(*str){
+		put_char(*str);
+		*str++;
+	}
+	return pos;
+}
+
 unsigned short *printk_int(unsigned int n)
 {
 	/*0x0A = fg << 8 = bg*/
@@ -60,31 +77,6 @@ unsigned short *printk_int(unsigned int n)
 
 unsigned short *write_vga(char *str){
 	return printk(str);
-}
-
-unsigned short *printk(char *str)
-{
-	unsigned int i = 0;
-	unsigned int limit = strlenn(str);
-	
-	for(i = 0; i < limit; i++)   /* TODO: THIS APARENTLY DOESNT WORK */
-	{			
-		/* increment x cursor*/
-		vga_x++;
-
-		/* if at the end of width */
-		if(vga_x > 80){
-			vga_y++;
-			set_vga_xy(0,vga_y);
-		}
-
-		if(vga_y > 25)
-			set_vga_xy(0,0);
-		
-		put_char(str[i]);
-        }
-	
-	return pos;
 }
 
 unsigned short *set_vga_xy(unsigned int x, unsigned int y)
