@@ -30,7 +30,7 @@
 unsigned short *pos = (unsigned short *) COLOR_VGA_ADDR;
 unsigned int vga_x, vga_y = 0;
 unsigned int line_count = 0;
-
+int attrib = ((0x00 << 4) | (0x02 & 0x0F)) << 8;
 
 unsigned short *put_char(char c)
 {
@@ -61,11 +61,25 @@ unsigned short *put_char(char c)
 }
 
 unsigned short *printk(char *str){
-	while(*str){
-		put_char(*str);
-		*str++;
+
+
+	unsigned char c;
+	while ((c=*(str++))){
+		*pos++ = c | attrib;
+	}
+
+
+/*
+	*pos++ = 0x49 | attrib;
+	*pos++ = 0x6E | attrib;
+	*pos++ = 0x74 | attrib;
+*/
+/*
+	while(*str != 0){
+		*pos++ = *str++ | attrib;
 	}
 	return pos;
+*/
 }
 
 unsigned short *printk_int(unsigned int n)
