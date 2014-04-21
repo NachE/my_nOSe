@@ -20,5 +20,4 @@
 
 #define haszero(v)  (((v) - 0x01010101UL) & ~ (v) & 0x80808080UL)
 
-unsigned int strlen(char *str);
 
