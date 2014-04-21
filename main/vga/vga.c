@@ -35,7 +35,7 @@ unsigned int line_count = 0;
 unsigned short *put_char(char c)
 {
 
-	c = 'a'; /*TODO: FORCE USE THIS CHAR FOR DEBUG PURPOSES*/
+	/*c = 'a';*/ /*TODO: FORCE USE THIS CHAR FOR DEBUG PURPOSES*/
 
 	if(c == '\n') /*TODO: THIS DOESNT WORK */
 	{
@@ -65,8 +65,9 @@ unsigned short *write_vga(char *str){
 unsigned short *printk(char *str)
 {
 	unsigned int i = 0;
+	unsigned int limit = strlenn(str);
 	
-	for(i = 0; i < strlen(str); i++)   /* TODO: THIS APARENTLY DOESNT WORK */
+	for(i = 0; i < limit; i++)   /* TODO: THIS APARENTLY DOESNT WORK */
 	{			
 		/* increment x cursor*/
 		vga_x++;

@@ -19,5 +19,5 @@
 
 
 
-unsigned int strlen(char *str);
+unsigned int strlenn(char *str);
 

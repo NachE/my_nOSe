@@ -18,13 +18,13 @@
  */
 
 
-unsigned int strlen(char *str)
+unsigned int strlenn(char *str)
 {
 	unsigned int lenght = 0;
 	char *tmp; 
 	tmp = str;
 
-	while(*tmp++)
+	for(lenght = 0; *tmp != '\0'; tmp++)
 		lenght++;
 	
 	return lenght;

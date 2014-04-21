@@ -17,7 +17,7 @@ typedef struct interrupts{
 
 
 void isr_kernel(interrupts_t interrupt){
-	printk("Interrupt received\n");
+	printk("Interrupt received\n\0");
 	printINT(interrupt);
 }
 
@@ -25,7 +25,7 @@ void printINT(interrupts_t interrupt)
 {
 
 	if(interrupt.error_code != 0){
-		printk("With Error Code");
+		printk("With Error Code\0");
 	}else{
 		printk("NO ERRCODE\0");
 	}
@@ -72,7 +72,7 @@ void printINT(interrupts_t interrupt)
 			printk("Stack Fault\0");
 			break;
 		case 0x0D:
-			printk("General Protection Fault\n");
+			printk("General Protection Fault\n\0");
 			break;
 		case 0x0E:
 			printk("Page fault\0");
