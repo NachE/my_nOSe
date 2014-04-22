@@ -13,6 +13,7 @@ CFLAGS=-Wall -Wextra -O -m32 -c -ffreestanding -nostdinc -nostdlib -fno-builtin 
 LDFLAGS=-melf_i386 -Tld/link.ld
 ASFLAGS=-f elf32
 
+
 all: $(OBJS)
 	$(LD) $(LDFLAGS) -o knOSe $^
 
@@ -23,7 +24,13 @@ all: $(OBJS)
 	nasm $(ASFLAGS) $^ 
 
 clean:
-	rm $(OBJS)
-	rm knOSe
-        
+	rm -rf $(OBJS)
+	rm -rf knOSe
+
+debug:
+	make clean
+	make
+	util/makeISO.sh
+	util/startbochs.sh
+
 .PHONY: clean
