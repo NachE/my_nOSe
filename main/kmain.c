@@ -24,9 +24,10 @@ extern void debug_idt();
 void kmain()
 {
 	/*set_vga_xy(40,12);*/
-	printk("Welcome to nOSe\nuno");
-	printk("dos\n");
-	printk("tres");
+	/*printk("Welcome to nOSe\nuno");*/
 
+	/*printk("dos\n");*/
+
+	printk(0x0049);
 	for (;;);
 }

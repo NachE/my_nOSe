@@ -25,6 +25,6 @@
 
 unsigned short *write_vga(char *str);
 unsigned short *put_char(char c);
-unsigned short *printk(char *str);
+unsigned short *printk(const char *str);
 unsigned short *printk_int(unsigned int n);
 unsigned short *set_vga_xy(unsigned int x, unsigned int y);

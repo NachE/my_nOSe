@@ -27,7 +27,7 @@
  0xB8002 Char in position 1
 */
 
-unsigned short *pos = (unsigned short *) COLOR_VGA_ADDR;
+volatile char *pos = (volatile char *) COLOR_VGA_ADDR;
 unsigned int vga_x, vga_y = 0;
 unsigned int line_count = 0;
 int attrib = ((0x00 << 4) | (0x02 & 0x0F)) << 8;
@@ -60,14 +60,45 @@ unsigned short *put_char(char c)
 	return pos;
 }
 
-unsigned short *printk(char *str){
+unsigned short *printk(const char *str){
 
 
-	unsigned char c;
-	while ((c=*(str++))){
-		*pos++ = c | attrib;
+/*	while(*str != 0){
+		*pos++ = *str++;
+		*pos++ = 0x2A;
 	}
+*/
 
+	char a = 'a';
+	char b = 'b';
+	char c = 'c';
+
+	*pos++ = 0x49;
+	*pos++ = 0x2A;
+
+	*pos++ = b;
+	*pos++ = 0x2A;
+
+	*pos++ = c;
+	*pos++ = 0x2A;
+
+	*pos++ = str[0];
+	*pos++ = 0x2A;
+
+/*
+	unsigned char c;
+	*pos++ = str[2] | attrib;
+	*pos++ = 0x6E | attrib;
+	*pos++ = 0x74 | attrib;
+
+	*pos++ = str[0] | attrib;
+	*pos++ = str[1] | attrib;
+	*pos++ = str[2] | attrib;
+
+	while ((c=*(str++))){
+		*pos++ = (c << 8) | attrib;
+	}
+*/
 
 /*
 	*pos++ = 0x49 | attrib;
