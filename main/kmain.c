@@ -25,6 +25,6 @@ void kmain()
 {
 	set_vga_xy(40,12);
 	printk("Welcome to nOSe");
-	asm volatile("int $0x12");	
+	asm volatile("int $0x12");
 	for (;;);
 }

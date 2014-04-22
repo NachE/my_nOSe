@@ -27,49 +27,41 @@
  0xB8002 Char in position 1
 */
 
-unsigned char *pos = (unsigned char *) COLOR_VGA_ADDR;
+unsigned short int *pos = (unsigned short int *) COLOR_VGA_ADDR;
 unsigned int vga_x, vga_y = 0;
 unsigned int line_count = 0;
 int attrib = ((0x00 << 4) | (0x02 & 0x0F)) << 8;
 
-unsigned char *put_char(char c)
+void put_char(char c)
 {
 	if(c == '\n')
 	{
 		/* reset x and increment y
 		 * this func correct vga_x and vga_y */
-
-		/*TODO DOWN LINE HERE*/
-
+		set_vga_xy(0, vga_y+1);
 	}else{
-		*pos++ = c; /* put char on screen */
-		*pos++ = 0x0A; /* put color of char */
+		*pos++ = c | (0x0A << 8); /* put char on screen */
 	}
-	return pos;
 }
 
-unsigned char *printk(const char *str)
+void printk(const char *str)
 {
 	while(*str != '\0'){
 		put_char(*str);
 		str++;
 	}
-	return pos;
 }
 
-unsigned char *printk_int(unsigned int n)
+void printk_int(unsigned int n)
 {
 	/*0x0A = fg << 8 = bg*/
 	*pos++ = n | (0x0A << 8); /*TODO: OBVIOUSLY THIS DOES NOT WORK*/
-	return pos;
 }
 
-unsigned char *set_vga_xy(unsigned int x, unsigned int y)
+void set_vga_xy(unsigned int x, unsigned int y)
 {
 	unsigned int position = ( y * MAX_VGA_COLS ) + x;
-	pos = (unsigned char *) COLOR_VGA_ADDR + position;
+	pos = (unsigned short int *) COLOR_VGA_ADDR + position;
 	vga_x = x;
 	vga_y = y;
-
-	return pos;
 }
