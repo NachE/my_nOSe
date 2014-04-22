@@ -13,46 +13,13 @@
 ; 0. You just DO WHAT THE FUCK YOU WANT TO.
 
 ; nasm syntax: http://www.nasm.us/doc/nasmdoc3.html
-
-bits 32
-global load_gdt
-global start
-extern kmain
-extern kernel_start
-extern bss
-extern kernel_end
-
-; multiboot specification
-; http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
-section .multiboot
-MULTIBOOT_PAGE_ALIGN	equ 0x00000001
-MULTIBOOT_MEMORY_INFO	equ 0x00000002
-MULTIBOOT_AOUT_KLUDGE	equ 0x00010000
-MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
-MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_AOUT_KLUDGE
-MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
-
-align 4
-multiboot:
-	; DB Define Byte (8)
-	; DW Define Word (16)
-	; DD Define Double (32)
-	dd MULTIBOOT_HEADER_MAGIC
-	dd MULTIBOOT_HEADER_FLAGS
-	dd MULTIBOOT_CHECKSUM
-
-	dd multiboot
-	dd kernel_start ; code, .text
-	dd bss		; .data
-	dd kernel_end
-	dd start
-
-section .text
-start:
-	mov	esp,kernel_stack ;stack on bss
-	call	load_gdt
-
-gdt:
+; DOC:
+; http://www.gnu.org/software/grub/manual/multibooti/multiboot.html
+; http://download.intel.com/products/processor/manual/253668.pdf
+;
+; DB Define Byte (8)
+; DW Define Word (16)
+; DD Define Double (32)
 ; using intel doc manual
 ; http://download.intel.com/products/processor/manual/253668.pdf
 ; The code sample define it as struct, Im going to try with this
@@ -106,18 +73,45 @@ gdt:
 ;           |
 ;           |_______________________________________________________________________________________ Base                               
 ;
-;
-; 00235612348i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-; 00235612348i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-;
-; 00175389824i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 1fffffff 1 1 <-- 1fffffff ???
-;
-	;gdtNULL:
+
+bits 32
+global load_gdt
+global start
+extern kmain
+extern kernel_start
+extern bss
+extern kernel_end
+
+start:
+	mov	esp,kernel_stack ;setup a new stack
+	call load_gdt
+
+align 4
+multiboot:
+	MULTIBOOT_PAGE_ALIGN	equ 0x00000001
+	MULTIBOOT_MEMORY_INFO	equ 0x00000002
+	MULTIBOOT_AOUT_KLUDGE	equ 0x00010000
+	MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
+	MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_AOUT_KLUDGE
+	MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
+
+	dd MULTIBOOT_HEADER_MAGIC
+	dd MULTIBOOT_HEADER_FLAGS
+	dd MULTIBOOT_CHECKSUM
+
+	dd multiboot
+	dd kernel_start ; code, .text
+	dd bss		; .data
+	dd kernel_end
+	dd start
+
+gdt:
+	;1 gdtNULL:
 	; first, null descriptor
 	dd	0x00000000
 	dd	0x00000000
-	;gdtCS:
-	; code segment
+
+	;2 code segment, CS
 	dw	0xFFFF    ; Limit
 	dw	0x0000    ; Base
 	db	0x00      ; Base
@@ -125,26 +119,24 @@ gdt:
 	db	10011010b ; 1 00  1 1010  0x9A Access
 	db	11001111b ; Granularity 0xC1
 	db	0x00      ; base
-	;gdtDS:
-	; data
+
+	;3 data segment, DS
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
-	;db	0x92
 	db	10010010b
-	;db	0xC0
 	db	11001111b
 	db	0x00
-	;gdtuCS:
-	; user code
+
+	;4 user code, uCS
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
 	db	10011010b
 	db	00000000b
 	db	0x00
-	;gdtuDS:
-	; user data
+	
+	;5 user data, uDS
 	dw	0xFFFF
 	dw	0x0000
 	db	0x00
@@ -152,6 +144,7 @@ gdt:
 	db	00000000b
 	db	0x00
 
+	;6 LDT
 	dw	0x000F
 	dw	0x0000
 	db	0x00 ;IDT BASE
@@ -173,7 +166,6 @@ load_gdt:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	jmp     0x08:farjump ; CS location
 
 farjump:
 	;call load_idt
