@@ -81,28 +81,24 @@ global load_idt
 global debug_idt
 extern kmain
 extern kernel_start
-extern bss
 extern kernel_end
 extern isr_kernel
-extern isr_kernel_debug
 
 %macro ISRX 1
 	isr%1:
-		mov dword [0xb8000], '1111'
+		;mov dword [0xb8000], 0x0A49 ;this is only for debug purposes
 		cli
 		push byte 0
 		push byte %1 ; interrupt number
 		jmp call_isr_kernel
-		sti
 %endmacro
 
 %macro ISRX_WITHECODE 1
 	isr%1:
-		mov dword [0xb8000], '8888'
+		;mov dword [0xb8000], 0x0A48 ;this is only for debug purposes
 		cli
 		push byte %1
 		jmp call_isr_kernel
-		sti
 %endmacro
 
 %macro IDTX 1
@@ -139,9 +135,11 @@ multiboot:
 	dd kernel_end
 	dd start
 
+;initialized vars
+section .data
+
 gdt:
-	;1 gdtNULL:
-	; first, null descriptor
+	;1 first, null descriptor
 	dd	0x00000000
 	dd	0x00000000
 
@@ -181,7 +179,7 @@ gdt:
 	;6 LDT
 	dw	0x000F
 	dw	0x0000
-	db	idtr ;IDT BASE
+	db	0x00 ;IDT BASE
 	db	10011010b
 	db	11001111b
 	db	0x00
@@ -192,6 +190,12 @@ gdtr:
 	dd	gdt      ; I think base is the same size at limit but
 			 ; but if i put dw here I get error. Why?
 			 ; OK, limit->16 bits. Base -> 32 bits
+idtr:
+	dw (50*8)-1
+	dd idt
+
+;executable instructions
+section .text
 
 ISRX 0   ; Divide error
 ISRX 1   ; Debug
@@ -250,32 +254,25 @@ ISRX 51
 ISRX 52
 ISRX 53
 
-idtr:
-	dw (50*8)-1
-	dd idt
-
-idt:
-	resd 50*2
-
 call_isr_kernel:
-        pusha
-        mov ax, ds
-        push eax
-        mov ax, 0x10
-        mov ds, ax
-        mov es, ax
-        mov fs, ax
-        mov gs, ax
-        ;mov ss, ax
-        call isr_kernel
-        pop eax
-        mov ds, ax
-        mov es, ax
-        mov fs, ax
-        mov gs, ax
-        popa
-        add esp, 8
-        iret
+	pusha
+	mov ax, ds
+	push eax
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	call isr_kernel
+	pop eax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	popa
+	add esp, 8
+	sti
+	iret
 			 
 load_gdt:
 	lgdt	[gdtr]
@@ -351,5 +348,14 @@ load_idt:
 	lidt    [idtr]
 	ret
 
+;uninitialized data
+section .bss
+bss:
+	idt:
+		resd 50*2
+
+
+;the stack:
 resb 8400
 kernel_stack:
+
