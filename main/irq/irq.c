@@ -21,6 +21,10 @@ void isr_kernel(interrupts_t interrupt){
 	printINT(interrupt);
 }
 
+void irq_kernel(interrupts_t interrupt){
+	printk("irq!!!");
+}
+
 void printINT(interrupts_t interrupt)
 {
 

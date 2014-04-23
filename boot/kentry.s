@@ -83,6 +83,7 @@ extern kmain
 extern kernel_start
 extern kernel_end
 extern isr_kernel
+extern irq_kernel
 
 %macro ISRX 1
 	isr%1:
@@ -101,6 +102,14 @@ extern isr_kernel
 		jmp call_isr_kernel
 %endmacro
 
+%macro IRQX 1
+	irq%1:
+		cli
+		push byte 0
+		push byte %1
+		jmp call_irq_kernel
+%endmacro
+
 %macro IDTX 1
 	mov	eax,isr%1		;move isr address to eax
 	mov	[idt+%1*8],ax		;low part of handler address
@@ -110,8 +119,18 @@ extern isr_kernel
 	mov	[idt+%1*8+6],ax		;move the hight part to idt entry
 %endmacro
 
+%macro IDTX_IRQ 1
+	mov	eax,irq%1		;move irq address to eax
+	mov	[idt+%1*8],ax		;low part of handler address
+	mov word [idt+%1*8+2],0x08	;code selector
+	mov word [idt+%1*8+4],0x8E00	;attributes
+	shr	eax,16			;move the hight part to eax
+	mov	[idt+%1*8+6],ax		;move the hight part to idt entry
+%endmacro
+
 start:
 	mov	esp,kernel_stack ;setup a new stack
+	call remap_irq
 	call load_gdt
 	call load_idt
 	call kmain
@@ -230,23 +249,25 @@ ISRX 28  ;
 ISRX 29  ;
 ISRX 30  ;
 ISRX 31  ;
-; 32-255 ; Maskable interrupts
-ISRX 32
-ISRX 33
-ISRX 34
-ISRX 35
-ISRX 36
-ISRX 37
-ISRX 38
-ISRX 39
-ISRX 40
-ISRX 41
-ISRX 42
-ISRX 43
-ISRX 44
-ISRX 45
-ISRX 46
-ISRX 47
+; 32-255: Maskable interrupts
+; Mask 32 to 47 by irqs
+IRQX 32
+IRQX 33
+IRQX 34
+IRQX 35
+IRQX 36
+IRQX 37
+IRQX 38
+IRQX 39
+IRQX 40
+IRQX 41
+IRQX 42
+IRQX 43
+IRQX 44
+IRQX 45
+IRQX 46
+IRQX 47
+;
 ISRX 48
 ISRX 49
 ISRX 50
@@ -273,7 +294,27 @@ call_isr_kernel:
 	add esp, 8
 	sti
 	iret
-			 
+
+call_irq_kernel:
+	pusha
+	mov ax, ds
+	push eax
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	call irq_kernel
+	pop eax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	popa
+	add esp, 8
+	sti
+	iret
+		 
 load_gdt:
 	lgdt	[gdtr]
 	mov ax, 0x10 ; DS location
@@ -286,6 +327,50 @@ load_gdt:
 
 farjump:
 	ret
+
+remap_irq:
+	;remapping irq
+	cli
+	mov al, 0x11
+	mov dx, 0x20
+	out dx, al
+
+	mov al, 0x11
+	mov dx, 0xA0
+	out dx, al
+
+	mov al, 0x20
+	mov dx, 0x21
+	out dx, al
+
+	mov al, 0x28
+	mov dx, 0xA1
+	out dx, al
+
+	mov al, 0x04
+	mov dx, 0x21
+	out dx, al
+
+	mov al, 0x02
+	mov dx, 0xA1
+	out dx, al
+
+	mov al, 0x01
+	mov dx, 0x21
+	out dx, al
+
+	mov al, 0x01
+	mov dx, 0xA1
+	out dx, al
+
+	mov al, 0x0
+	mov dx, 0x21
+	out dx, al
+
+	mov al, 0x0
+	mov dx, 0XA1
+	out dx, al
+	sti
 
 load_idt:
 	;poblate idt
@@ -321,22 +406,23 @@ load_idt:
 	IDTX 29
 	IDTX 30
 	IDTX 31
-	IDTX 32
-	IDTX 33
-	IDTX 34
-	IDTX 35
-	IDTX 36
-	IDTX 37
-	IDTX 38
-	IDTX 39
-	IDTX 40
-	IDTX 41
-	IDTX 42
-	IDTX 43
-	IDTX 44
-	IDTX 45
-	IDTX 46
-	IDTX 47
+	;Fom 32 to 47 are used for IRQs
+	IDTX_IRQ 32
+	IDTX_IRQ 33
+	IDTX_IRQ 34
+	IDTX_IRQ 35
+	IDTX_IRQ 36
+	IDTX_IRQ 37
+	IDTX_IRQ 38
+	IDTX_IRQ 39
+	IDTX_IRQ 40
+	IDTX_IRQ 41
+	IDTX_IRQ 42
+	IDTX_IRQ 43
+	IDTX_IRQ 44
+	IDTX_IRQ 45
+	IDTX_IRQ 46
+	IDTX_IRQ 47
 	IDTX 48
 	IDTX 49
 	IDTX 50
