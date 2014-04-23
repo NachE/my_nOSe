@@ -2,12 +2,11 @@
 #include <nose/irq.h>
 extern void eoi_irq_a();
 extern void eoi_irq_b();
-
+extern unsigned char inportb1(unsigned short int port);
 
 void isr_kernel_debug(){
 	printk("\nisr_kernel_debug called\n");
 }
-
 
 /*
 typedef struct interrupts{
@@ -25,7 +24,16 @@ void isr_kernel(interrupts_t interrupt){
 }
 
 void irq_kernel(interrupts_t interrupt){
-	printk("irq!!!");
+
+	unsigned char scancode;
+
+	if(interrupt.int_number == 0x21){
+		printk("irq!!!");
+		scancode = inportb1(0x60);
+		if(scancode & 0x80){
+			printk("key released");
+		}
+	}
 
 	if(interrupt.int_number >= 40){
 		eoi_irq_b();

@@ -85,6 +85,7 @@ global load_idt
 global debug_idt
 global eoi_irq_a
 global eoi_irq_b
+global inportb1
 extern kmain
 extern kernel_start
 extern kernel_end
@@ -379,16 +380,36 @@ remap_irq:
 	mov dx, 0XA1
 	out dx, al
 	sti
+	ret
 
 eoi_irq_b:
 	mov al, 0x20
 	mov dx, 0xA0
 	out dx, al
+	ret
 
 eoi_irq_a:
 	mov al, 0x20
 	mov dx, 0x20
 	out dx, al
+	ret
+
+inportb1:
+	;enter 0,0
+	push ebp
+	mov ebp,esp
+
+	pusha
+	mov dx, [ebp+8]
+	in al, dx
+	popa
+	movzx eax, al
+
+	;leave
+	mov esp,ebp
+	pop ebp
+	end
+	ret
 
 load_idt:
 	;poblate idt

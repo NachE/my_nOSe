@@ -10,4 +10,3 @@ typedef struct interrupts{
 void isr_kernel_debug(void);
 void isr_kernel(interrupts_t interrupt);
 void printINT(interrupts_t interrupt);
-
