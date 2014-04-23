@@ -73,12 +73,18 @@
 ;           |
 ;           |_______________________________________________________________________________________ Base                               
 ;
+; IRQ, Programmable Interrupt Controller 8259A
+; http://pdos.csail.mit.edu/6.828/2005/readings/hardware/8259A.pdf
+
+
 
 bits 32
 global load_gdt
 global start
 global load_idt
 global debug_idt
+global eoi_irq_a
+global eoi_irq_b
 extern kmain
 extern kernel_start
 extern kernel_end
@@ -331,18 +337,20 @@ farjump:
 remap_irq:
 	;remapping irq
 	cli
-	mov al, 0x11
-	mov dx, 0x20
+	mov al, 0x11 ;value
+	mov dx, 0x20 ;port
 	out dx, al
 
 	mov al, 0x11
 	mov dx, 0xA0
 	out dx, al
 
+	;PICM to 0x20
 	mov al, 0x20
 	mov dx, 0x21
 	out dx, al
-
+	
+	;PICS to 0x28
 	mov al, 0x28
 	mov dx, 0xA1
 	out dx, al
@@ -371,6 +379,16 @@ remap_irq:
 	mov dx, 0XA1
 	out dx, al
 	sti
+
+eoi_irq_b:
+	mov al, 0x20
+	mov dx, 0xA0
+	out dx, al
+
+eoi_irq_a:
+	mov al, 0x20
+	mov dx, 0x20
+	out dx, al
 
 load_idt:
 	;poblate idt

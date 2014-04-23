@@ -1,5 +1,8 @@
 #include <nose/vga.h>
 #include <nose/irq.h>
+extern void eoi_irq_a();
+extern void eoi_irq_b();
+
 
 void isr_kernel_debug(){
 	printk("\nisr_kernel_debug called\n");
@@ -23,6 +26,11 @@ void isr_kernel(interrupts_t interrupt){
 
 void irq_kernel(interrupts_t interrupt){
 	printk("irq!!!");
+
+	if(interrupt.int_number >= 40){
+		eoi_irq_b();
+	}
+	eoi_irq_a();
 }
 
 void printINT(interrupts_t interrupt)
