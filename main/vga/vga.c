@@ -36,6 +36,17 @@ int attrib = ((0x00 << 4) | (0x02 & 0x0F)) << 8;
 
 void put_char(char c)
 {
+	vga_x++;
+
+	if(vga_x > 80){
+		vga_x=0;
+		vga_y++;
+	}
+
+	if(vga_y > 24){
+		set_vga_xy(0,0);
+	}
+
 	if(c == '\n')
 	{
 		/* reset x and increment y
