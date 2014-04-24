@@ -22,6 +22,9 @@
 #include <nose/vga.h>
 #include "generickbd.h"
 
+/*http://ee.bgu.ac.il/~/microlab/microLab/Labs/ScanCodes.htm*/
+char scancodes[] = "\0*1234567890-=**qwertyuiop{}\n*asdfghjkl:'~*\zxcvbnm,./********************";
+
 void install_generickbd(){
 	install_irq(0x21, generickbd_main);
 }
@@ -29,11 +32,9 @@ void install_generickbd(){
 void generickbd_main(interrupts_t regs)
 {
 	char scancode;
-
-	if(regs.int_number == 0x21){
 	scancode = inportb1(0x60);
-		if(scancode == 0x1e){
-			printk("Key a");
-		}
+	if(scancode & 0x80){
+	}else{
+		put_char(scancodes[(int)scancode]);
 	}
 }
