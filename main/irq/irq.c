@@ -1,5 +1,5 @@
 /*
- *   vga.c
+ *   irq.c
  *
  *   This file is part of nOSe.
  *
@@ -21,13 +21,6 @@
 
 #include <nose/vga.h>
 #include <nose/irq.h>
-extern void eoi_irq_a();
-extern void eoi_irq_b();
-extern char inportb1(unsigned short int port);
-
-void isr_kernel_debug(){
-	printk("\nisr_kernel_debug called\n");
-}
 
 /*
 typedef struct interrupts{
@@ -38,26 +31,29 @@ typedef struct interrupts{
 } interrupts_t;
 */
 
-void isr_kernel(interrupts_t interrupt){
+void *irq_funcs[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+void isr_kernel(interrupts_t interrupt)
+{
 	printk("\nInterrupt received\n");
 	printINT(interrupt);
 }
 
-void irq_kernel(interrupts_t interrupt){
+void install_irq(unsigned int irq_num, void(*irq_func)(interrupts_t regs))
+{
+	irq_funcs[irq_num] = irq_func;
+}
 
-	char scancode;
+void irq_kernel(interrupts_t regs)
+{
+	void (*irq_func)(interrupts_t regs);
 
-	if(interrupt.int_number == 0x21){
-		
-		/* read scancode from keyboard buffer*/
-		scancode = inportb1(0x60);
-		
-		if(scancode == 0x1e){
-			printk("Key a");
-		}
+	irq_func = irq_funcs[regs.int_number];
+	if(irq_func){
+		irq_func(regs);
 	}
 
-	if(interrupt.int_number >= 40){
+	if(regs.int_number >= 40){
 		eoi_irq_b();
 	}
 	eoi_irq_a();

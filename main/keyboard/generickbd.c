@@ -1,7 +1,9 @@
 /*
- *   kmain.c
- * 
+ *   generickbd.c
+ *
  *   This file is part of nOSe.
+ *
+ *   Copyright (C) 2014 J.A Nache <nache.nache@gmail.com>
  *
  *   nOSe is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,16 +18,22 @@
  *   You should have received a copy of the GNU General Public License
  *   along with nOSe.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <nose/vga.h>
 #include <nose/irq.h>
-#include "keyboard/generickbd.h"
+#include <nose/vga.h>
+#include "generickbd.h"
 
-void kmain()
+void install_generickbd(){
+	install_irq(0x21, generickbd_main);
+}
+
+void generickbd_main(interrupts_t regs)
 {
-	set_vga_xy(40,12);
-	printk("Welcome to nOSe");
-	/*asm volatile("int $0x12");*/
-	install_generickbd();
-	for (;;);
+	char scancode;
+
+	if(regs.int_number == 0x21){
+	scancode = inportb1(0x60);
+		if(scancode == 0x1e){
+			printk("Key a");
+		}
+	}
 }
