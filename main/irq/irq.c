@@ -1,8 +1,29 @@
+/*
+ *   vga.c
+ *
+ *   This file is part of nOSe.
+ *
+ *   Copyright (C) 2013-2014 J.A Nache <nache.nache@gmail.com>
+ *
+ *   nOSe is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   nOSe is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with nOSe.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <nose/vga.h>
 #include <nose/irq.h>
 extern void eoi_irq_a();
 extern void eoi_irq_b();
-extern unsigned char inportb1(unsigned short int port);
+extern char inportb1(unsigned short int port);
 
 void isr_kernel_debug(){
 	printk("\nisr_kernel_debug called\n");
@@ -17,7 +38,6 @@ typedef struct interrupts{
 } interrupts_t;
 */
 
-
 void isr_kernel(interrupts_t interrupt){
 	printk("\nInterrupt received\n");
 	printINT(interrupt);
@@ -25,11 +45,13 @@ void isr_kernel(interrupts_t interrupt){
 
 void irq_kernel(interrupts_t interrupt){
 
-	unsigned char scancode;
+	char scancode;
 
 	if(interrupt.int_number == 0x21){
+		
+		/* read scancode from keyboard buffer*/
 		scancode = inportb1(0x60);
-		printk(scancode);
+		
 		if(scancode == 0x1e){
 			printk("Key a");
 		}

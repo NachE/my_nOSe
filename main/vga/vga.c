@@ -3,6 +3,8 @@
  * 
  *   This file is part of nOSe.
  *
+ *   Copyright (C) 2013-2014 J.A Nache <nache.nache@gmail.com>
+ *
  *   nOSe is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
@@ -44,7 +46,7 @@ void put_char(char c)
 	}
 }
 
-void printk(const char *str)
+void printk(char *str)
 {
 	while(*str != '\0'){
 		put_char(*str);

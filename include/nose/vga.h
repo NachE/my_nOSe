@@ -24,7 +24,7 @@
 #define MAX_VGA_ROWS 25
 
 void put_char(char c);
-void printk(const char *str);
+void printk(char *str);
 void printk_int(unsigned int n);
 void set_vga_xy(unsigned int x, unsigned int y);
 
