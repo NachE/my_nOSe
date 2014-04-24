@@ -397,20 +397,17 @@ eoi_irq_a:
 inportb1:
 	push ebp ;save state of base pointer
 	mov ebp, esp ;new base pointer
-	sub esp, 1 ; reserve 1byte
 	push dx	; save state of dx
 
 	mov dx, [ebp+8] ;move 0x60 to dx
 
 	in al, dx ;save value of port 0x60 (dx) to al
+	
+	;debug purpose, show byte in top-left corner
 	mov byte [0xb8000], al
 	mov byte [0xb8001], 0x0A
-	mov [ebp-1], al ;move port value tos stack
-
-	add  eax, [ebp-1] ;put stack into eax 
 
 	pop dx ;restore dx
-	mov esp, ebp ;out reserved vars
 	pop ebp ;restore base pointer
 	
 	ret
