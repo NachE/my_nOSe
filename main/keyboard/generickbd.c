@@ -22,8 +22,8 @@
 #include <nose/vga.h>
 #include "generickbd.h"
 
-/*http://ee.bgu.ac.il/~/microlab/microLab/Labs/ScanCodes.htm*/
-char scancodes[] = "\0*1234567890-=**qwertyuiop{}\n*asdfghjkl:'~*\zxcvbnm,./********************";
+/*http://www.ee.bgu.ac.il/~microlab/MicroLab/Labs/ScanCodes.htm*/
+char scancodes[] = "\0*1234567890-=*\tqwertyuiop{}\n*asdfghjkl:'~**\zxcvbnm,./*** ********************";
 
 void install_generickbd(){
 	install_irq(0x21, generickbd_main);
