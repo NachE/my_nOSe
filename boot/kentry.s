@@ -395,20 +395,24 @@ eoi_irq_a:
 	ret
 
 inportb1:
-	;enter 0,0
-	push ebp
-	mov ebp,esp
+	push ebp ;save state of base pointer
+	mov ebp, esp ;new base pointer
+	sub esp, 1 ; reserve 1byte
+	push dx	; save state of dx
 
-	pusha
-	mov dx, [ebp+8]
-	in al, dx
-	popa
-	movzx eax, al
+	mov dx, [ebp+8] ;move 0x60 to dx
 
-	;leave
-	mov esp,ebp
-	pop ebp
-	end
+	in al, dx ;save value of port 0x60 (dx) to al
+	mov byte [0xb8000], al
+	mov byte [0xb8001], 0x0A
+	mov [ebp-1], al ;move port value tos stack
+
+	add  eax, [ebp-1] ;put stack into eax 
+
+	pop dx ;restore dx
+	mov esp, ebp ;out reserved vars
+	pop ebp ;restore base pointer
+	
 	ret
 
 load_idt:

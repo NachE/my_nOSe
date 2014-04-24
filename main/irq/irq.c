@@ -28,10 +28,10 @@ void irq_kernel(interrupts_t interrupt){
 	unsigned char scancode;
 
 	if(interrupt.int_number == 0x21){
-		printk("irq!!!");
 		scancode = inportb1(0x60);
-		if(scancode & 0x80){
-			printk("key released");
+		printk(scancode);
+		if(scancode == 0x1e){
+			printk("Key a");
 		}
 	}
 
