@@ -23,7 +23,7 @@
 #include "generickbd.h"
 
 /*http://www.ee.bgu.ac.il/~microlab/MicroLab/Labs/ScanCodes.htm*/
-char scancodes[] = "\0*1234567890-=*\tqwertyuiop{}\n*asdfghjkl:'~*\\zxcvbnm,./*** ********************";
+char scancodes[] = "\0*1234567890-=\b\tqwertyuiop{}\n*asdfghjkl:'~*\\zxcvbnm,./*** ********************";
 
 void install_generickbd(){
 	install_irq(0x21, generickbd_main);

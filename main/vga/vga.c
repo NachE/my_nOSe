@@ -36,24 +36,34 @@ int attrib = ((0x00 << 4) | (0x02 & 0x0F)) << 8;
 
 void put_char(char c)
 {
-	vga_x++;
+	if(c == '\n')
+	{
+		/* reset x and increment y
+		 * this func correct vga_x and vga_y */
+		set_vga_xy(0, vga_y+1);
+	}else if(c == '\b'){
+		*pos--;
+		*pos-- = '\0' | (0x0A << 8);
+		*pos++;
+		vga_x--;
+	}else{
+		*pos++ = c | (0x0A << 8); /* put char on screen */
+		vga_x++;
+	}
 
 	if(vga_x > 80){
 		vga_x=0;
 		vga_y++;
 	}
 
-	if(vga_y > 24){
-		set_vga_xy(0,0);
+	if(vga_x < 0){
+		vga_x=80;
+		vga_y--;
 	}
 
-	if(c == '\n')
-	{
-		/* reset x and increment y
-		 * this func correct vga_x and vga_y */
-		set_vga_xy(0, vga_y+1);
-	}else{
-		*pos++ = c | (0x0A << 8); /* put char on screen */
+	if(vga_y > 24){
+		/*TODO: SCROLL SCREEN HERE*/
+		set_vga_xy(0,0);
 	}
 }
 
