@@ -24,7 +24,8 @@
 void kmain()
 {
 	set_vga_xy(40,12);
-	printk("Welcome to nOSe");
+	printk("Welcome to nOSe\n");
+	printk_int(666);
 	/*asm volatile("int $0x12");*/
 	install_generickbd();
 	for (;;);

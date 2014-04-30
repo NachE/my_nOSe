@@ -65,6 +65,17 @@ void put_char(char c)
 		/*TODO: SCROLL SCREEN HERE*/
 		set_vga_xy(0,0);
 	}
+
+	debug_cursor();
+}
+
+void debug_cursor(){
+	char x = (char)( (int)'0'+vga_x );
+	char y = (char)( (int)'0'+vga_y );
+	unsigned short int *corner = (unsigned short int *) COLOR_VGA_ADDR;
+	*corner++ = x | (0x0A << 8);
+	*corner++ = 'x' | (0x0A << 8);
+	*corner++ = y | (0x0A << 8);
 }
 
 void printk(char *str)
@@ -77,8 +88,27 @@ void printk(char *str)
 
 void printk_int(unsigned int n)
 {
-	/*0x0A = fg << 8 = bg*/
-	*pos++ = n | (0x0A << 8); /*TODO: OBVIOUSLY THIS DOES NOT WORK*/
+	printk(itoa(n));
+}
+
+char *itoa(unsigned int n)
+{
+	char c[11] = "a"; /* 10 for numbers, 1 for \0. Use 12 for signed */
+/*
+	int m = 0;
+	int i = 0;
+	
+	while(n > 0){
+		m = n%10;
+
+		c[i++] = (char)(m+48);
+
+		n /=10;
+	}
+	
+	c[i]='\0';
+*/
+	return c;
 }
 
 void set_vga_xy(unsigned int x, unsigned int y)

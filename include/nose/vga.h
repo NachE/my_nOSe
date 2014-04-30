@@ -27,4 +27,5 @@ void put_char(char c);
 void printk(char *str);
 void printk_int(unsigned int n);
 void set_vga_xy(unsigned int x, unsigned int y);
-
+void debug_cursor();
+char *itoa(unsigned int n);
