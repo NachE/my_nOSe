@@ -91,16 +91,22 @@ void printk_int(unsigned int n)
 	int m = 0;
 	char c;
 	
+	n = 666;
+
 	while(n > 0){
 
-		m = n % 10;
+		/*m = n % 10;*/
+
+		m = n & 9;
 
 		c = (char)( m + 48 );
-		
+			
 		put_char(c);
 
 		/*n /=10;*/
-		n = n / 10;
+		if( n != 0 ){
+			n = n / 10;
+		}
 	}
 }
 
