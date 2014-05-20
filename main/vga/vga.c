@@ -92,17 +92,15 @@ void printk_int(unsigned int n)
 	char c;
 	
 	while(n > 0){
-		m = n%10;
 
-		c=(char)(m+48);
+		m = n % 10;
+
+		c = (char)( m + 48 );
 		
-		/* Works */
-		/* put_char('a'); */
-
-		/* doesn't work */
 		put_char(c);
 
-		n /=10;
+		/*n /=10;*/
+		n = n / 10;
 	}
 }
 
