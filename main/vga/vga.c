@@ -88,15 +88,21 @@ void printk(char *str)
 
 void printk_int(unsigned int n)
 {
-	int m = 0;
-	char c;
+
+	int m, i = 0;
+	char c[11];
 	
 	while(n > 0)
 	{
 		m = n % 10;
-		c = (char)( m + 48 );
-		put_char(c);
+		c[i] = (char)( m + 48 );	
 		n = n / 10;
+		i++;
+	}
+
+	for(i--; i >= 0; i--)
+	{
+		put_char(c[i]);
 	}
 }
 
