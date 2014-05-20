@@ -88,39 +88,22 @@ void printk(char *str)
 
 void printk_int(unsigned int n)
 {
-	printk(itoa(n));
-}
-
-char *itoa(unsigned int n)
-{
-	char c[11]; /* 10 for numbers, 1 for \0. Use 12 for signed */
-	char *str;
-
-/*
 	int m = 0;
-	int i = 0;
+	char c;
 	
 	while(n > 0){
 		m = n%10;
 
-		c[i++] = (char)(m+48);
+		c=(char)(m+48);
+		
+		/* Works */
+		/* put_char('a'); */
+
+		/* doesn't work */
+		put_char(c);
 
 		n /=10;
 	}
-	
-	c[i]='\0';
-	
-	str = &c[0];
-
-*/
-
-	c[0]=0x61;
-	c[1]=0x62;
-	c[2]=0x63;
-	c[3]=0x00;
-	str = &c[0];
-
-	return str;
 }
 
 void set_vga_xy(unsigned int x, unsigned int y)
