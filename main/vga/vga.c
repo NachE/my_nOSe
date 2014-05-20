@@ -93,7 +93,9 @@ void printk_int(unsigned int n)
 
 char *itoa(unsigned int n)
 {
-	char c[11] = "a"; /* 10 for numbers, 1 for \0. Use 12 for signed */
+	char c[11]; /* 10 for numbers, 1 for \0. Use 12 for signed */
+	char *str;
+
 /*
 	int m = 0;
 	int i = 0;
@@ -107,8 +109,18 @@ char *itoa(unsigned int n)
 	}
 	
 	c[i]='\0';
+	
+	str = &c[0];
+
 */
-	return c;
+
+	c[0]=0x61;
+	c[1]=0x62;
+	c[2]=0x63;
+	c[3]=0x00;
+	str = &c[0];
+
+	return str;
 }
 
 void set_vga_xy(unsigned int x, unsigned int y)
